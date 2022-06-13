@@ -1,0 +1,28 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "resourceGroup": {
+            "value": "rg-team-3-may-case-arm-we"
+        },
+        "bastionHostName": {
+            "value": "bastion-snm-arm"
+        },
+        "publicIpAddressName": {
+            "value": "bastion-snm-arm-pubip"
+        },
+        "subnetName": {
+            "value": "AzureBastionSubnet"
+        },
+        "existingVNETName":
+        {
+            "value": "VNet-snm"
+        },
+        "subnetAddressPrefix":
+        {
+            "value": "10.1.4.0/24"
+        },
+        "location": {
+            "value": "westeurope"
+        }
+    }

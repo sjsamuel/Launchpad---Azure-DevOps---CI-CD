@@ -1,0 +1,551 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "virtualMachineScaleSets_vmss_snm_name": {
+            "defaultValue": "vmss-snm",
+            "type": "String"
+        },
+        "networkSecurityGroups_nsg_vmss_snm_externalid": {
+            "defaultValue": "/subscriptions/1688f6c5-a6d2-4875-8668-9b418ed631a1/resourceGroups/rg-team-3-may-case-we/providers/Microsoft.Network/networkSecurityGroups/nsg-vmss-snm",
+            "type": "String"
+        },
+        "virtualNetworks_vnet_snm_externalid": {
+            "defaultValue": "/subscriptions/1688f6c5-a6d2-4875-8668-9b418ed631a1/resourceGroups/rg-team-3-may-case-we/providers/Microsoft.Network/virtualNetworks/vnet_snm",
+            "type": "String"
+        },
+        "loadBalancers_lb_vmss_snm_externalid": {
+            "defaultValue": "/subscriptions/1688f6c5-a6d2-4875-8668-9b418ed631a1/resourceGroups/rg-team-3-may-case-we/providers/Microsoft.Network/loadBalancers/lb-vmss-snm",
+            "type": "String"
+        },
+        "disks_vmss_snm_vmss_snm_0_OsDisk_1_5a3d5a02a3fe447ba5a7103a0feb2254_externalid": {
+            "defaultValue": "/subscriptions/1688f6c5-a6d2-4875-8668-9b418ed631a1/resourceGroups/rg-team-3-may-case-we/providers/Microsoft.Compute/disks/vmss-snm_vmss-snm_0_OsDisk_1_5a3d5a02a3fe447ba5a7103a0feb2254",
+            "type": "String"
+        },
+        "disks_vmss_snm_vmss_snm_1_OsDisk_1_e2a04334ed214023be366ef579115aed_externalid": {
+            "defaultValue": "/subscriptions/1688f6c5-a6d2-4875-8668-9b418ed631a1/resourceGroups/rg-team-3-may-case-we/providers/Microsoft.Compute/disks/vmss-snm_vmss-snm_1_OsDisk_1_e2a04334ed214023be366ef579115aed",
+            "type": "String"
+        },
+        "disks_vmss_snm_vmss_snm_2_OsDisk_1_ce5bd6e523d642cab3363bc913036607_externalid": {
+            "defaultValue": "/subscriptions/1688f6c5-a6d2-4875-8668-9b418ed631a1/resourceGroups/rg-team-3-may-case-we/providers/Microsoft.Compute/disks/vmss-snm_vmss-snm_2_OsDisk_1_ce5bd6e523d642cab3363bc913036607",
+            "type": "String"
+        }
+    },
+    "variables": {},
+    "resources": [
+        {
+            "type": "Microsoft.Compute/virtualMachineScaleSets",
+            "apiVersion": "2022-03-01",
+            "name": "[parameters('virtualMachineScaleSets_vmss_snm_name')]",
+            "location": "westeurope",
+            "tags": {
+                "Case Study": "vmss",
+                "Contact": "<define@email.com>"
+            },
+            "sku": {
+                "name": "Standard_DS1_v2",
+                "tier": "Standard",
+                "capacity": 3
+            },
+            "zones": [
+                "1",
+                "2",
+                "3"
+            ],
+            "properties": {
+                "singlePlacementGroup": false,
+                "upgradePolicy": {
+                    "mode": "Automatic"
+                },
+                "scaleInPolicy": {
+                    "rules": [
+                        "Default"
+                    ]
+                },
+                "virtualMachineProfile": {
+                    "osProfile": {
+                        "computerNamePrefix": "[concat(parameters('virtualMachineScaleSets_vmss_snm_name'), 'y')]",
+                        "adminUsername": "snmadmin",
+                        "linuxConfiguration": {
+                            "disablePasswordAuthentication": false,
+                            "provisionVMAgent": true
+                        },
+                        "secrets": [],
+                        "allowExtensionOperations": true
+                    },
+                    "storageProfile": {
+                        "osDisk": {
+                            "osType": "Linux",
+                            "createOption": "FromImage",
+                            "caching": "ReadWrite",
+                            "managedDisk": {
+                                "storageAccountType": "StandardSSD_LRS"
+                            },
+                            "diskSizeGB": 30
+                        },
+                        "imageReference": {
+                            "publisher": "Canonical",
+                            "offer": "UbuntuServer",
+                            "sku": "18_04-lts-gen2",
+                            "version": "latest"
+                        }
+                    },
+                    "networkProfile": {
+                        "networkInterfaceConfigurations": [
+                            {
+                                "name": "vnet_snm-nic01",
+                                "properties": {
+                                    "primary": true,
+                                    "enableAcceleratedNetworking": false,
+                                    "networkSecurityGroup": {
+                                        "id": "[parameters('networkSecurityGroups_nsg_vmss_snm_externalid')]"
+                                    },
+                                    "dnsSettings": {
+                                        "dnsServers": []
+                                    },
+                                    "enableIPForwarding": false,
+                                    "ipConfigurations": [
+                                        {
+                                            "name": "vnet_snm-nic01-defaultIpConfiguration",
+                                            "properties": {
+                                                "primary": true,
+                                                "subnet": {
+                                                    "id": "[concat(parameters('virtualNetworks_vnet_snm_externalid'), '/subnets/sub2-snm')]"
+                                                },
+                                                "privateIPAddressVersion": "IPv4",
+                                                "loadBalancerBackendAddressPools": [
+                                                    {
+                                                        "id": "[concat(parameters('loadBalancers_lb_vmss_snm_externalid'), concat('/backendAddressPools/bepool-', parameters('virtualMachineScaleSets_vmss_snm_name')))]"
+                                                    }
+                                                ],
+                                                "loadBalancerInboundNatPools": [
+                                                    {
+                                                        "id": "[concat(parameters('loadBalancers_lb_vmss_snm_externalid'), '/inboundNatPools/natpool')]"
+                                                    }
+                                                ]
+                                            }
+                                        }
+                                    ]
+                                }
+                            }
+                        ]
+                    },
+                    "diagnosticsProfile": {
+                        "bootDiagnostics": {
+                            "enabled": true
+                        }
+                    },
+                    "extensionProfile": {
+                        "extensions": [
+                            {
+                                "name": "CustomScript",
+                                "properties": {
+                                    "autoUpgradeMinorVersion": true,
+                                    "publisher": "Microsoft.Azure.Extensions",
+                                    "type": "CustomScript",
+                                    "typeHandlerVersion": "2.0",
+                                    "settings": {}
+                                }
+                            }
+                        ]
+                    }
+                },
+                "overprovision": false,
+                "doNotRunExtensionsOnOverprovisionedVMs": false,
+                "zoneBalance": false,
+                "platformFaultDomainCount": 1
+            }
+        },
+        {
+            "type": "Microsoft.Compute/virtualMachineScaleSets/extensions",
+            "apiVersion": "2022-03-01",
+            "name": "[concat(parameters('virtualMachineScaleSets_vmss_snm_name'), '/CustomScript')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Compute/virtualMachineScaleSets', parameters('virtualMachineScaleSets_vmss_snm_name'))]"
+            ],
+            "properties": {
+                "provisioningState": "Succeeded",
+                "autoUpgradeMinorVersion": true,
+                "publisher": "Microsoft.Azure.Extensions",
+                "type": "CustomScript",
+                "typeHandlerVersion": "2.0",
+                "settings": {}
+            }
+        },
+        {
+            "type": "Microsoft.Compute/virtualMachineScaleSets/virtualMachines",
+            "apiVersion": "2022-03-01",
+            "name": "[concat(parameters('virtualMachineScaleSets_vmss_snm_name'), '/0')]",
+            "location": "westeurope",
+            "dependsOn": [
+                "[resourceId('Microsoft.Compute/virtualMachineScaleSets', parameters('virtualMachineScaleSets_vmss_snm_name'))]"
+            ],
+            "tags": {
+                "Case Study": "vmss",
+                "Contact": "<define@email.com>"
+            },
+            "sku": {
+                "name": "Standard_DS1_v2",
+                "tier": "Standard"
+            },
+            "zones": [
+                "1"
+            ],
+            "properties": {
+                "networkProfileConfiguration": {
+                    "networkInterfaceConfigurations": [
+                        {
+                            "name": "vnet_snm-nic01",
+                            "properties": {
+                                "primary": true,
+                                "enableAcceleratedNetworking": false,
+                                "networkSecurityGroup": {
+                                    "id": "[parameters('networkSecurityGroups_nsg_vmss_snm_externalid')]"
+                                },
+                                "dnsSettings": {
+                                    "dnsServers": []
+                                },
+                                "enableIPForwarding": false,
+                                "ipConfigurations": [
+                                    {
+                                        "name": "vnet_snm-nic01-defaultIpConfiguration",
+                                        "properties": {
+                                            "primary": true,
+                                            "subnet": {
+                                                "id": "[concat(parameters('virtualNetworks_vnet_snm_externalid'), '/subnets/sub2-snm')]"
+                                            },
+                                            "privateIPAddressVersion": "IPv4",
+                                            "loadBalancerBackendAddressPools": [
+                                                {
+                                                    "id": "[concat(parameters('loadBalancers_lb_vmss_snm_externalid'), '/backendAddressPools/bepool-vmss-snm')]"
+                                                }
+                                            ],
+                                            "loadBalancerInboundNatPools": [
+                                                {
+                                                    "id": "[concat(parameters('loadBalancers_lb_vmss_snm_externalid'), '/inboundNatPools/natpool')]"
+                                                }
+                                            ]
+                                        }
+                                    }
+                                ]
+                            }
+                        }
+                    ]
+                },
+                "hardwareProfile": {
+                    "vmSize": "Standard_DS1_v2"
+                },
+                "storageProfile": {
+                    "imageReference": {
+                        "publisher": "Canonical",
+                        "offer": "UbuntuServer",
+                        "sku": "18_04-lts-gen2",
+                        "version": "latest"
+                    },
+                    "osDisk": {
+                        "osType": "Linux",
+                        "name": "vmss-snm_vmss-snm_0_OsDisk_1_5a3d5a02a3fe447ba5a7103a0feb2254",
+                        "createOption": "FromImage",
+                        "caching": "ReadWrite",
+                        "managedDisk": {
+                            "storageAccountType": "StandardSSD_LRS",
+                            "id": "[parameters('disks_vmss_snm_vmss_snm_0_OsDisk_1_5a3d5a02a3fe447ba5a7103a0feb2254_externalid')]"
+                        },
+                        "diskSizeGB": 30
+                    },
+                    "dataDisks": []
+                },
+                "osProfile": {
+                    "computerName": "vmss-snmy000000",
+                    "adminUsername": "snmadmin",
+                    "linuxConfiguration": {
+                        "disablePasswordAuthentication": false,
+                        "provisionVMAgent": true
+                    },
+                    "secrets": [],
+                    "allowExtensionOperations": true,
+                    "requireGuestProvisionSignal": true
+                },
+                "networkProfile": {
+                    "networkInterfaces": [
+                        {
+                            "id": "[concat(resourceId('Microsoft.Compute/virtualMachineScaleSets/virtualMachines', parameters('virtualMachineScaleSets_vmss_snm_name'), '0'), '/networkInterfaces/vnet_snm-nic01')]"
+                        }
+                    ]
+                },
+                "diagnosticsProfile": {
+                    "bootDiagnostics": {
+                        "enabled": true
+                    }
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Compute/virtualMachineScaleSets/virtualMachines",
+            "apiVersion": "2022-03-01",
+            "name": "[concat(parameters('virtualMachineScaleSets_vmss_snm_name'), '/1')]",
+            "location": "westeurope",
+            "dependsOn": [
+                "[resourceId('Microsoft.Compute/virtualMachineScaleSets', parameters('virtualMachineScaleSets_vmss_snm_name'))]"
+            ],
+            "tags": {
+                "Case Study": "vmss",
+                "Contact": "<define@email.com>"
+            },
+            "sku": {
+                "name": "Standard_DS1_v2",
+                "tier": "Standard"
+            },
+            "zones": [
+                "2"
+            ],
+            "properties": {
+                "networkProfileConfiguration": {
+                    "networkInterfaceConfigurations": [
+                        {
+                            "name": "vnet_snm-nic01",
+                            "properties": {
+                                "primary": true,
+                                "enableAcceleratedNetworking": false,
+                                "networkSecurityGroup": {
+                                    "id": "[parameters('networkSecurityGroups_nsg_vmss_snm_externalid')]"
+                                },
+                                "dnsSettings": {
+                                    "dnsServers": []
+                                },
+                                "enableIPForwarding": false,
+                                "ipConfigurations": [
+                                    {
+                                        "name": "vnet_snm-nic01-defaultIpConfiguration",
+                                        "properties": {
+                                            "primary": true,
+                                            "subnet": {
+                                                "id": "[concat(parameters('virtualNetworks_vnet_snm_externalid'), '/subnets/sub2-snm')]"
+                                            },
+                                            "privateIPAddressVersion": "IPv4",
+                                            "loadBalancerBackendAddressPools": [
+                                                {
+                                                    "id": "[concat(parameters('loadBalancers_lb_vmss_snm_externalid'), '/backendAddressPools/bepool-vmss-snm')]"
+                                                }
+                                            ],
+                                            "loadBalancerInboundNatPools": [
+                                                {
+                                                    "id": "[concat(parameters('loadBalancers_lb_vmss_snm_externalid'), '/inboundNatPools/natpool')]"
+                                                }
+                                            ]
+                                        }
+                                    }
+                                ]
+                            }
+                        }
+                    ]
+                },
+                "hardwareProfile": {
+                    "vmSize": "Standard_DS1_v2"
+                },
+                "storageProfile": {
+                    "imageReference": {
+                        "publisher": "Canonical",
+                        "offer": "UbuntuServer",
+                        "sku": "18_04-lts-gen2",
+                        "version": "latest"
+                    },
+                    "osDisk": {
+                        "osType": "Linux",
+                        "name": "vmss-snm_vmss-snm_1_OsDisk_1_e2a04334ed214023be366ef579115aed",
+                        "createOption": "FromImage",
+                        "caching": "ReadWrite",
+                        "managedDisk": {
+                            "storageAccountType": "StandardSSD_LRS",
+                            "id": "[parameters('disks_vmss_snm_vmss_snm_1_OsDisk_1_e2a04334ed214023be366ef579115aed_externalid')]"
+                        },
+                        "diskSizeGB": 30
+                    },
+                    "dataDisks": []
+                },
+                "osProfile": {
+                    "computerName": "vmss-snmy000001",
+                    "adminUsername": "snmadmin",
+                    "linuxConfiguration": {
+                        "disablePasswordAuthentication": false,
+                        "provisionVMAgent": true
+                    },
+                    "secrets": [],
+                    "allowExtensionOperations": true,
+                    "requireGuestProvisionSignal": true
+                },
+                "networkProfile": {
+                    "networkInterfaces": [
+                        {
+                            "id": "[concat(resourceId('Microsoft.Compute/virtualMachineScaleSets/virtualMachines', parameters('virtualMachineScaleSets_vmss_snm_name'), '1'), '/networkInterfaces/vnet_snm-nic01')]"
+                        }
+                    ]
+                },
+                "diagnosticsProfile": {
+                    "bootDiagnostics": {
+                        "enabled": true
+                    }
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Compute/virtualMachineScaleSets/virtualMachines",
+            "apiVersion": "2022-03-01",
+            "name": "[concat(parameters('virtualMachineScaleSets_vmss_snm_name'), '/2')]",
+            "location": "westeurope",
+            "dependsOn": [
+                "[resourceId('Microsoft.Compute/virtualMachineScaleSets', parameters('virtualMachineScaleSets_vmss_snm_name'))]"
+            ],
+            "tags": {
+                "Case Study": "vmss",
+                "Contact": "<define@email.com>"
+            },
+            "sku": {
+                "name": "Standard_DS1_v2",
+                "tier": "Standard"
+            },
+            "zones": [
+                "3"
+            ],
+            "properties": {
+                "networkProfileConfiguration": {
+                    "networkInterfaceConfigurations": [
+                        {
+                            "name": "vnet_snm-nic01",
+                            "properties": {
+                                "primary": true,
+                                "enableAcceleratedNetworking": false,
+                                "networkSecurityGroup": {
+                                    "id": "[parameters('networkSecurityGroups_nsg_vmss_snm_externalid')]"
+                                },
+                                "dnsSettings": {
+                                    "dnsServers": []
+                                },
+                                "enableIPForwarding": false,
+                                "ipConfigurations": [
+                                    {
+                                        "name": "vnet_snm-nic01-defaultIpConfiguration",
+                                        "properties": {
+                                            "primary": true,
+                                            "subnet": {
+                                                "id": "[concat(parameters('virtualNetworks_vnet_snm_externalid'), '/subnets/sub2-snm')]"
+                                            },
+                                            "privateIPAddressVersion": "IPv4",
+                                            "loadBalancerBackendAddressPools": [
+                                                {
+                                                    "id": "[concat(parameters('loadBalancers_lb_vmss_snm_externalid'), '/backendAddressPools/bepool-vmss-snm')]"
+                                                }
+                                            ],
+                                            "loadBalancerInboundNatPools": [
+                                                {
+                                                    "id": "[concat(parameters('loadBalancers_lb_vmss_snm_externalid'), '/inboundNatPools/natpool')]"
+                                                }
+                                            ]
+                                        }
+                                    }
+                                ]
+                            }
+                        }
+                    ]
+                },
+                "hardwareProfile": {
+                    "vmSize": "Standard_DS1_v2"
+                },
+                "storageProfile": {
+                    "imageReference": {
+                        "publisher": "Canonical",
+                        "offer": "UbuntuServer",
+                        "sku": "18_04-lts-gen2",
+                        "version": "latest"
+                    },
+                    "osDisk": {
+                        "osType": "Linux",
+                        "name": "vmss-snm_vmss-snm_2_OsDisk_1_ce5bd6e523d642cab3363bc913036607",
+                        "createOption": "FromImage",
+                        "caching": "ReadWrite",
+                        "managedDisk": {
+                            "storageAccountType": "StandardSSD_LRS",
+                            "id": "[parameters('disks_vmss_snm_vmss_snm_2_OsDisk_1_ce5bd6e523d642cab3363bc913036607_externalid')]"
+                        },
+                        "diskSizeGB": 30
+                    },
+                    "dataDisks": []
+                },
+                "osProfile": {
+                    "computerName": "vmss-snmy000002",
+                    "adminUsername": "snmadmin",
+                    "linuxConfiguration": {
+                        "disablePasswordAuthentication": false,
+                        "provisionVMAgent": true
+                    },
+                    "secrets": [],
+                    "allowExtensionOperations": true,
+                    "requireGuestProvisionSignal": true
+                },
+                "networkProfile": {
+                    "networkInterfaces": [
+                        {
+                            "id": "[concat(resourceId('Microsoft.Compute/virtualMachineScaleSets/virtualMachines', parameters('virtualMachineScaleSets_vmss_snm_name'), '2'), '/networkInterfaces/vnet_snm-nic01')]"
+                        }
+                    ]
+                },
+                "diagnosticsProfile": {
+                    "bootDiagnostics": {
+                        "enabled": true
+                    }
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Compute/virtualMachineScaleSets/virtualMachines/extensions",
+            "apiVersion": "2022-03-01",
+            "name": "[concat(parameters('virtualMachineScaleSets_vmss_snm_name'), '/0/CustomScript')]",
+            "location": "westeurope",
+            "dependsOn": [
+                "[resourceId('Microsoft.Compute/virtualMachineScaleSets/virtualMachines', parameters('virtualMachineScaleSets_vmss_snm_name'), '0')]",
+                "[resourceId('Microsoft.Compute/virtualMachineScaleSets', parameters('virtualMachineScaleSets_vmss_snm_name'))]"
+            ],
+            "properties": {
+                "autoUpgradeMinorVersion": true,
+                "publisher": "Microsoft.Azure.Extensions",
+                "type": "CustomScript",
+                "typeHandlerVersion": "2.0",
+                "settings": {}
+            }
+        },
+        {
+            "type": "Microsoft.Compute/virtualMachineScaleSets/virtualMachines/extensions",
+            "apiVersion": "2022-03-01",
+            "name": "[concat(parameters('virtualMachineScaleSets_vmss_snm_name'), '/1/CustomScript')]",
+            "location": "westeurope",
+            "dependsOn": [
+                "[resourceId('Microsoft.Compute/virtualMachineScaleSets/virtualMachines', parameters('virtualMachineScaleSets_vmss_snm_name'), '1')]",
+                "[resourceId('Microsoft.Compute/virtualMachineScaleSets', parameters('virtualMachineScaleSets_vmss_snm_name'))]"
+            ],
+            "properties": {
+                "autoUpgradeMinorVersion": true,
+                "publisher": "Microsoft.Azure.Extensions",
+                "type": "CustomScript",
+                "typeHandlerVersion": "2.0",
+                "settings": {}
+            }
+        },
+        {
+            "type": "Microsoft.Compute/virtualMachineScaleSets/virtualMachines/extensions",
+            "apiVersion": "2022-03-01",
+            "name": "[concat(parameters('virtualMachineScaleSets_vmss_snm_name'), '/2/CustomScript')]",
+            "location": "westeurope",
+            "dependsOn": [
+                "[resourceId('Microsoft.Compute/virtualMachineScaleSets/virtualMachines', parameters('virtualMachineScaleSets_vmss_snm_name'), '2')]",
+                "[resourceId('Microsoft.Compute/virtualMachineScaleSets', parameters('virtualMachineScaleSets_vmss_snm_name'))]"
+            ],
+            "properties": {
+                "autoUpgradeMinorVersion": true,
+                "publisher": "Microsoft.Azure.Extensions",
+                "type": "CustomScript",
+                "typeHandlerVersion": "2.0",
+                "settings": {}
+            }
+        }
+    ]
+}

@@ -1,0 +1,111 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {},
+    "variables": {},
+    "resources": [
+      {
+        "type": "Microsoft.Resources/deployments",
+        "apiVersion": "2021-04-01",
+        "name": "linkedTemplate-storage",
+        "properties": {
+          "mode": "Incremental",
+          "templateLink": {
+            "uri":"https://filesdeployment42.blob.core.windows.net/templates/storageacc.json?sp=r&st=2022-06-07T08:35:37Z&se=2022-06-30T16:35:37Z&sv=2020-08-04&sr=b&sig=ESlrcYLfNYHEaK5qnuEPDNhtsDw0CFIYR7%2F3nei%2FT%2FU%3D",
+            "contentVersion":"1.0.0.0"
+            }
+        }
+      },
+      {
+        "type": "Microsoft.Resources/deployments",
+        "apiVersion": "2021-04-01",
+        "name": "linkedTemplate-acr",
+        "properties": {
+          "mode": "Incremental",
+          "templateLink": {
+            "uri": "https://filesdeployment42.blob.core.windows.net/templates/acr.json?sp=r&st=2022-06-06T13:46:55Z&se=2022-06-30T21:46:55Z&sv=2020-08-04&sr=b&sig=iDZL8qf0kXWBdwouyweVBMpf95lVL%2BlTysttxNM1%2BD4%3D",
+            "contentVersion": "1.0.0.0"
+            }
+      }
+    },
+      {
+        "type": "Microsoft.Resources/deployments",
+        "apiVersion": "2021-04-01",
+        "name": "linkedTemplate-vnetandsubnets",
+        "properties": {
+          "mode": "Incremental",
+          "templateLink": {
+            "uri": "https://filesdeployment42.blob.core.windows.net/templates/Vnet%20and%20Subnets.json?sp=r&st=2022-06-06T09:53:42Z&se=2022-06-30T17:53:42Z&spr=https&sv=2020-08-04&sr=b&sig=qVo4icr1ddg7sqXu21c4nrt1JzunBe7iGYk%2B1Eumx4U%3D",
+            "contentVersion": "1.0.0.0"
+            }
+      }
+    },
+    {
+        "type": "Microsoft.Resources/deployments",
+        "apiVersion": "2021-04-01",
+        "name": "linkedTemplate-VMSS",
+        "properties": {
+          "mode": "Incremental",
+          "templateLink": {
+            "uri": "https://filesdeployment42.blob.core.windows.net/templates/vmss.json?sp=r&st=2022-06-06T10:58:48Z&se=2022-06-30T18:58:48Z&sv=2020-08-04&sr=b&sig=UxdjN39GaITH4LoJiwmGBmDw7Nf%2BsBxXhRs%2BCdHUuT4%3D",
+            "contentVersion": "1.0.0.0"
+            }
+      }
+    },
+    {
+        "type": "Microsoft.Resources/deployments",
+        "apiVersion": "2021-04-01",
+        "name": "linkedTemplate-AppServicePlan",
+        "properties": {
+          "mode": "Incremental",
+          "templateLink": {
+            "uri": "https://filesdeployment42.blob.core.windows.net/templates/AppServicePlan.json?sp=r&st=2022-06-07T13:51:10Z&se=2022-06-30T21:51:10Z&sv=2020-08-04&sr=b&sig=1Jsvwi%2FKLfL0AS1haQuv0rylkLaoPVI%2BeAz3JEFzxEI%3D",
+            "contentVersion": "1.0.0.0"
+            }
+      }
+    },
+    {
+        "type": "Microsoft.Resources/deployments",
+        "apiVersion": "2021-04-01",
+        "name": "linkedTemplate-bastion",
+        "properties": {
+          "mode": "Incremental",
+          "templateLink": {
+            "uri": "https://filesdeployment42.blob.core.windows.net/templates/Bastion.json?sp=r&st=2022-06-07T14:33:08Z&se=2022-06-29T22:33:08Z&sv=2020-08-04&sr=b&sig=oi2ArQGNXa3BLueCYHhkymWifW9T1vx4WqnmjKWhwSc%3D",
+            "contentVersion": "1.0.0.0"
+            }
+      }
+    },
+    {
+        "type": "Microsoft.Resources/deployments",
+        "apiVersion": "2021-04-01",
+        "name": "linkedTemplate-webapp",
+        "properties": {
+          "mode": "Incremental",
+          "templateLink": {
+            "uri": "https://filesdeployment42.blob.core.windows.net/templates/Webapp.json?sp=r&st=2022-06-07T13:51:55Z&se=2022-06-30T21:51:55Z&sv=2020-08-04&sr=b&sig=4Yyh7dUFcuer7e8DSRTgQnsqid6%2BdNCYkViq1F0hFKE%3D",
+            "contentVersion": "1.0.0.0"
+            }
+      }
+    },
+    {
+        "type": "Microsoft.Resources/deployments",
+        "apiVersion": "2021-04-01",
+        "name": "linkedTemplate-MongoDBVM",
+        "properties": {
+          "mode": "Incremental",
+          "templateLink": {
+            "uri": "https://filesdeployment42.blob.core.windows.net/templates/mongodbvm.json?sp=r&st=2022-06-06T10:33:36Z&se=2022-06-30T18:33:36Z&sv=2020-08-04&sr=b&sig=%2Bd2H7Y%2BIH0YXHFBmFCYDh3HQRw207bZSP8dp5y9paEo%3D",
+            "contentVersion": "1.0.0.0"
+            }
+            
+      }
+      }
+    ],
+
+    "outputs": {
+    }
+  }
+
+
+

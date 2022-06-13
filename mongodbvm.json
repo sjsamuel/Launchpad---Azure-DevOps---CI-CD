@@ -1,0 +1,127 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "virtualMachines_mongodb1_snm_name": {
+            "defaultValue": "mongodb-snm",
+            "type": "String"
+        },
+        "disks_mongodb1_snm_OsDisk_externalid": {
+            "defaultValue": "/subscriptions/1688f6c5-a6d2-4875-8668-9b418ed631a1/resourceGroups/rg-team-3-may-case-we/providers/Microsoft.Compute/disks/mongodb-snm_OsDisk",
+            "type": "String"
+        },
+        "networkInterfaces_nic-mongodb-snm_externalid": {
+            "defaultValue": "/subscriptions/1688f6c5-a6d2-4875-8668-9b418ed631a1/resourceGroups/rg-team-3-may-case-we/providers/Microsoft.Network/networkInterfaces/nic-mongodb-snm",
+            "type": "String"
+        }
+    },
+    "variables": {},
+    "resources": [
+        {
+            "type": "Microsoft.Compute/virtualMachines",
+            "apiVersion": "2022-03-01",
+            "name": "[parameters('virtualMachines_mongodb1_snm_name')]",
+            "location": "westeurope",
+            "tags": {
+                "Case Study": "MongoDB VM",
+                "Contact": "jukka.loikkanen@nordcloud.com",
+                "VMShutdown": "16"
+            },
+            "identity": {
+                "type": "SystemAssigned"
+            },
+            "properties": {
+                "hardwareProfile": {
+                    "vmSize": "Standard_D2s_v3"
+                },
+                "storageProfile": {
+                    "imageReference": {
+                        "publisher": "canonical",
+                        "offer": "0001-com-ubuntu-server-focal",
+                        "sku": "20_04-lts-gen2",
+                        "version": "latest"
+                    },
+                    "osDisk": {
+                        "osType": "Linux",
+                        "name": "[concat(parameters('virtualMachines_mongodb1_snm_name'), '_OsDisk_1_02a2b200885e4e65b1ca6937457a3c6a')]",
+                        "createOption": "FromImage",
+                        "caching": "ReadWrite",
+                        "managedDisk": {
+                            "id": "[parameters('disks_mongodb1_snm_OsDisk_1_02a2b200885e4e65b1ca6937457a3c6a_externalid')]"
+                        },
+                        "deleteOption": "Delete"
+                    },
+                    "dataDisks": []
+                },
+                "osProfile": {
+                    "computerName": "[parameters('virtualMachines_mongodb1_snm_name')]",
+                    "adminUsername": "snmadmin",
+                    "linuxConfiguration": {
+                        "disablePasswordAuthentication": true,
+                        "ssh": {
+                            "publicKeys": [
+                                {
+                                    "path": "/home/snmadmin/.ssh/authorized_keys",
+                                    "keyData": "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQDTCixloW2uNYU2HP72Us28Eiyh\r\ngqul+nXoGYkQOX4Omn+yBIgvvnBGH4a/BggLR2+1wEBuGW4k+KuSAcGXhb+XzyXj\r\nHU8TUdM1dCPnSeQ4UC4t+jUuI+NgzHDScZR9YESXciMv8FbV8Sbcui1h4iiDcXpJ\r\nYmWnEEQI5dvlpObC7ScFMFb+xdDDEJStly2HsD89QsyybFtPQPbvFEfylcKYvt+Y\r\nXVWAULI7AM//oL3tCcBZW21oPmjkD3orrrxIJNLxifxb7dS0k0JXNsRQyfvSwXPM\r\nQ9eCqrIt1yqB+d99FFmyesWC1WMuLlvYhuJPZVbh6+URdCyOKSJ5L48fqO0V7JsG\r\nwW8d172jNWRza2buAi7UWPyFWxw/vuZFBCR/Kb+wAX9onFeGdixbfjRq6So1zEKO\r\nWPMriX0OvXNZl/HOBJUjwiQ41vYBdYcvsdo+kuUPEJQ77y73nkH2/LfneZ5hHMCR\r\nXiRMWK7NHn/VfL9W1ggVaUb3w2VswdzgmZVJOwU= generated-by-azure\r\n"
+                                }
+                            ]
+                        },
+                        "provisionVMAgent": true,
+                        "patchSettings": {
+                            "patchMode": "ImageDefault",
+                            "assessmentMode": "ImageDefault"
+                        }
+                    },
+                    "secrets": [],
+                    "allowExtensionOperations": true,
+                    "requireGuestProvisionSignal": true
+                },
+                "networkProfile": {
+                    "networkInterfaces": [
+                        {
+                            "id": "[parameters('networkInterfaces_mongoDB_nic_externalid')]",
+                            "properties": {
+                                "deleteOption": "Delete"
+                            }
+                        }
+                    ]
+                },
+                "diagnosticsProfile": {
+                    "bootDiagnostics": {
+                        "enabled": true
+                    }
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Compute/virtualMachines/extensions",
+            "apiVersion": "2022-03-01",
+            "name": "[concat(parameters('virtualMachines_mongodb1_snm_name'), '/installmongo')]",
+            "location": "westeurope",
+            "dependsOn": [
+                "[resourceId('Microsoft.Compute/virtualMachines', parameters('virtualMachines_mongodb1_snm_name'))]"
+            ],
+            "tags": {
+                "Contact": "jukka.loikkanen@nordcloud.com"
+            },
+            "properties": {
+                "autoUpgradeMinorVersion": true,
+                "publisher": "Microsoft.Azure.Extensions",
+                "type": "CustomScript",
+                "typeHandlerVersion": "2.0",
+                "settings": {
+                    "fileUris": [
+                        [
+                            "https://filesdeployment42.blob.core.windows.net/files/deploy-dbvm.sh?sp=r&st=2022-06-02T12:20:10Z&se=2022-06-02T20:20:10Z&spr=https&sv=2020-08-04&sr=b&sig=HeRxxzQmJqRD6I0%2Fx0X9V5pWnzVz3Ekv9jwFJGgVz7M%3D"
+                        ]
+                    ]
+                },
+                "protectedSettings": {
+                    "storageAccountName": "[parameters('extensions_installmongo_storageAccountName')]",
+                    "storageAccountKey": "[parameters('extensions_installmongo_storageAccountKey')]",
+                    "commandToExecute": "[parameters('extensions_installmongo_commandToExecute')]"
+                }
+            }
+        }
+    ]
+}
